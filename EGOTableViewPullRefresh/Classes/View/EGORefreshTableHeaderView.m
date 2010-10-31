@@ -28,17 +28,18 @@
 
 
 #define TEXT_COLOR	 [UIColor colorWithRed:87.0/255.0 green:108.0/255.0 blue:137.0/255.0 alpha:1.0]
-#define BORDER_COLOR [UIColor colorWithRed:87.0/255.0 green:108.0/255.0 blue:137.0/255.0 alpha:1.0]
-
+#define BORDER_COLOR [UIColor colorWithRed:160.0/255.0 green:173.0/255.0 blue:182.0/255.0 alpha:1.0]
 
 @implementation EGORefreshTableHeaderView
 
 @synthesize state=_state;
-
+@synthesize bottomBorderThickness;
+@synthesize bottomBorderColor;
 
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-		
+
+		self.bottomBorderThickness = 1.0;
 		self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         
 		lastUpdatedLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, frame.size.height - 30.0f, self.frame.size.width, 20.0f)];
@@ -87,13 +88,20 @@
     return self;
 }
 
+// Will only draw a bottom border if you've set bottomBorderThickness to be > 0.0
+// and makes sure that the stroke is correctly centered so you get a border as thick
+// as you've asked for.
 - (void)drawRect:(CGRect)rect{
+	if ([self bottomBorderThickness] == 0.0f) return;
+	CGFloat strokeOffset = [self bottomBorderThickness] / 2.0f;
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	CGContextDrawPath(context,  kCGPathFillStroke);
-	[BORDER_COLOR setStroke];
+	UIColor *strokeColor = ([self bottomBorderColor]) ? [self bottomBorderColor] : BORDER_COLOR;
+	[strokeColor setStroke];
+	CGContextSetLineWidth(context, [self bottomBorderThickness]);
 	CGContextBeginPath(context);
-	CGContextMoveToPoint(context, 0.0f, self.bounds.size.height - 1);
-	CGContextAddLineToPoint(context, self.bounds.size.width, self.bounds.size.height - 1);
+	CGContextMoveToPoint(context, 0.0f, self.bounds.size.height - strokeOffset);
+	CGContextAddLineToPoint(context, self.bounds.size.width, self.bounds.size.height - strokeOffset);
 	CGContextStrokePath(context);
 }
 
@@ -148,6 +156,17 @@
 			[CATransaction commit];
 			
 			break;
+			
+		case EGOOPullRefreshUpToDate:
+			
+			statusLabel.text = @"Up-to-date.";
+			[activityView stopAnimating];
+			[CATransaction begin];
+			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions]; 
+			arrowImage.hidden = YES;
+			[CATransaction commit];
+			
+			break;			
 		default:
 			break;
 	}
@@ -156,6 +175,7 @@
 }
 
 - (void)dealloc {
+	[bottomBorderColor release], bottomBorderColor = nil;
 	activityView = nil;
 	statusLabel = nil;
 	arrowImage = nil;

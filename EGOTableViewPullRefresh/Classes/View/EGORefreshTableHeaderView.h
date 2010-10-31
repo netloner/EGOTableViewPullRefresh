@@ -31,7 +31,8 @@
 typedef enum{
 	EGOOPullRefreshPulling = 0,
 	EGOOPullRefreshNormal,
-	EGOOPullRefreshLoading,	
+	EGOOPullRefreshLoading,
+	EGOOPullRefreshUpToDate,	
 } EGOPullRefreshState;
 
 @interface EGORefreshTableHeaderView : UIView {
@@ -42,10 +43,13 @@ typedef enum{
 	UIActivityIndicatorView *activityView;
 	
 	EGOPullRefreshState _state;
-
+	UIColor *bottomBorderColor;
+	CGFloat bottomBorderThickness;
 }
 
 @property(nonatomic,assign) EGOPullRefreshState state;
+@property(nonatomic,retain) UIColor *bottomBorderColor;
+@property(nonatomic,assign) CGFloat bottomBorderThickness;
 
 - (void)setCurrentDate;
 - (void)setState:(EGOPullRefreshState)aState;
