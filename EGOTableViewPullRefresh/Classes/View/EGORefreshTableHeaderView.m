@@ -36,6 +36,18 @@
 @synthesize bottomBorderThickness;
 @synthesize bottomBorderColor;
 
+
+static NSDateFormatter *refreshFormatter;
+
+
++ (void)initialize
+{
+	/* Formatter for last refresh date */
+	refreshFormatter = [[NSDateFormatter alloc] init];
+	[refreshFormatter setDateStyle:NSDateFormatterShortStyle];
+	[refreshFormatter setTimeStyle:NSDateFormatterShortStyle];
+}
+
 - (id)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
 
@@ -53,8 +65,8 @@
 		[self addSubview:lastUpdatedLabel];
 		[lastUpdatedLabel release];
 
-		if ([[NSUserDefaults standardUserDefaults] objectForKey:@"EGORefreshTableView_LastRefresh"]) {
-			lastUpdatedLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"EGORefreshTableView_LastRefresh"];
+		if ([[NSUserDefaults standardUserDefaults] objectForKey:@"31SMS_EGORefreshTableView_LastRefresh"]) {
+			lastUpdatedLabel.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"31SMS_EGORefreshTableView_LastRefresh"];
 		} else {
 			[self setCurrentDate];
 		}
@@ -106,14 +118,18 @@
 }
 
 - (void)setCurrentDate {
-	NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-	[formatter setAMSymbol:@"AM"];
-	[formatter setPMSymbol:@"PM"];
-	[formatter setDateFormat:@"MM/dd/yyyy hh:mm:a"];
-	lastUpdatedLabel.text = [NSString stringWithFormat:@"Last Updated: %@", [formatter stringFromDate:[NSDate date]]];
-	[[NSUserDefaults standardUserDefaults] setObject:lastUpdatedLabel.text forKey:@"EGORefreshTableView_LastRefresh"];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-	[formatter release];
+//	NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+//	[formatter setAMSymbol:@"AM"];
+//	[formatter setPMSymbol:@"PM"];
+//	[formatter setDateFormat:@"MM/dd/yyyy hh:mm a"];
+//	lastUpdatedLabel.text = [NSString stringWithFormat:@"Last Updated: %@", [formatter stringFromDate:[NSDate date]]];
+//	[[NSUserDefaults standardUserDefaults] setObject:lastUpdatedLabel.text forKey:@"31SMS_EGORefreshTableView_LastRefresh"];
+//	[[NSUserDefaults standardUserDefaults] synchronize];
+//	[formatter release];
+	
+	lastUpdatedLabel.text = [NSString stringWithFormat:@"%@ %@",NSLocalizedString(@"Last Updated:", nil), [refreshFormatter stringFromDate:[NSDate date]]];
+	[[NSUserDefaults standardUserDefaults] setObject:lastUpdatedLabel.text forKey:@"31SMS_EGORefreshTableView_LastRefresh"];
+	[[NSUserDefaults standardUserDefaults] synchronize];	
 }
 
 - (void)setState:(EGOPullRefreshState)aState{
@@ -121,7 +137,7 @@
 	switch (aState) {
 		case EGOOPullRefreshPulling:
 			
-			statusLabel.text = @"Release to refresh...";
+			statusLabel.text = NSLocalizedString(@"Release to refresh...", nil);
 			[CATransaction begin];
 			[CATransaction setAnimationDuration:.18];
 			arrowImage.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
@@ -137,7 +153,7 @@
 				[CATransaction commit];
 			}
 			
-			statusLabel.text = @"Pull down to refresh...";
+			statusLabel.text = NSLocalizedString(@"Pull down to refresh...", nil);
 			[activityView stopAnimating];
 			[CATransaction begin];
 			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions]; 
@@ -148,7 +164,7 @@
 			break;
 		case EGOOPullRefreshLoading:
 			
-			statusLabel.text = @"Loading...";
+			statusLabel.text = NSLocalizedString(@"Loading...", nil);
 			[activityView startAnimating];
 			[CATransaction begin];
 			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions]; 
@@ -159,7 +175,7 @@
 			
 		case EGOOPullRefreshUpToDate:
 			
-			statusLabel.text = @"Up-to-date.";
+			statusLabel.text = NSLocalizedString(@"Up-to-date.", nil);
 			[activityView stopAnimating];
 			[CATransaction begin];
 			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions]; 
