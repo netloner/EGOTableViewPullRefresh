@@ -32,7 +32,8 @@ typedef enum{
 	EGOOPullRefreshPulling = 0,
 	EGOOPullRefreshNormal,
 	EGOOPullRefreshLoading,
-	EGOOPullRefreshUpToDate,	
+	EGOOPullRefreshUpToDate,
+	EGOOPullRefreshDownloadFail,
 } EGOPullRefreshState;
 
 @interface EGORefreshTableHeaderView : UIView {
@@ -41,6 +42,7 @@ typedef enum{
 	UILabel *statusLabel;
 	CALayer *arrowImage;
 	UIActivityIndicatorView *activityView;
+	UIProgressView *refershProBar;	
 	
 	EGOPullRefreshState _state;
 	UIColor *bottomBorderColor;

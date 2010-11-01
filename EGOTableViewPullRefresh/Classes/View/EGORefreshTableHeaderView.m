@@ -71,6 +71,16 @@ static NSDateFormatter *refreshFormatter;
 			[self setCurrentDate];
 		}
 		
+		CGFloat probarWidth  = 200.0f;
+		CGFloat probarHeight = 20.0f;		
+		refershProBar = [[UIProgressView alloc] initWithFrame:CGRectMake((self.frame.size.width - probarWidth)/2, frame.size.height - 20.0f , probarWidth, probarHeight)];
+		[refershProBar setProgressViewStyle:UIProgressViewStyleBar];
+		[refershProBar setProgress:0.0f];		
+		refershProBar.hidden = YES;
+		[self addSubview:refershProBar];		
+		[refershProBar release];
+		
+		
 		statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, frame.size.height - 48.0f, self.frame.size.width, 20.0f)];
 		statusLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 		statusLabel.font = [UIFont boldSystemFontOfSize:13.0f];
@@ -82,6 +92,8 @@ static NSDateFormatter *refreshFormatter;
 		[self setState:EGOOPullRefreshNormal];
 		[self addSubview:statusLabel];
 		[statusLabel release];
+		
+
 		
 		arrowImage = [[CALayer alloc] init];
 		arrowImage.frame = CGRectMake(25.0f, frame.size.height - 65.0f, 30.0f, 55.0f);
@@ -182,7 +194,19 @@ static NSDateFormatter *refreshFormatter;
 			arrowImage.hidden = YES;
 			[CATransaction commit];
 			
-			break;			
+			break;		
+			
+		case EGOOPullRefreshDownloadFail:
+			
+			statusLabel.text = NSLocalizedString(@"Network problem, please try again.", nil);
+			[activityView stopAnimating];
+			[CATransaction begin];
+			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions]; 
+			arrowImage.hidden = YES;
+			[CATransaction commit];
+			
+			break;	
+			
 		default:
 			break;
 	}
@@ -196,6 +220,7 @@ static NSDateFormatter *refreshFormatter;
 	statusLabel = nil;
 	arrowImage = nil;
 	lastUpdatedLabel = nil;
+	refershProBar = nil;
     [super dealloc];
 }
 
