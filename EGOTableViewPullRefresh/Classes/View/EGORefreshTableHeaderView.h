@@ -33,6 +33,7 @@ typedef enum{
 	EGOOPullRefreshNormal,
 	EGOOPullRefreshLoading,
 	EGOOPullRefreshUpToDate,
+	EGOOPullRefreshDownloading,
 	EGOOPullRefreshDownloadFail,
 } EGOPullRefreshState;
 
@@ -52,6 +53,7 @@ typedef enum{
 @property(nonatomic,assign) EGOPullRefreshState state;
 @property(nonatomic,retain) UIColor *bottomBorderColor;
 @property(nonatomic,assign) CGFloat bottomBorderThickness;
+@property(nonatomic,retain) UIProgressView *refershProBar;
 
 - (void)setCurrentDate;
 - (void)setState:(EGOPullRefreshState)aState;

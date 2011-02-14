@@ -34,8 +34,7 @@
 
 @synthesize state=_state;
 @synthesize bottomBorderThickness;
-@synthesize bottomBorderColor;
-
+@synthesize bottomBorderColor, refershProBar;
 
 static NSDateFormatter *refreshFormatter;
 
@@ -145,7 +144,7 @@ static NSDateFormatter *refreshFormatter;
 }
 
 - (void)setState:(EGOPullRefreshState)aState{
-	
+
 	switch (aState) {
 		case EGOOPullRefreshPulling:
 			
@@ -186,7 +185,8 @@ static NSDateFormatter *refreshFormatter;
 			break;
 			
 		case EGOOPullRefreshUpToDate:
-			
+			refershProBar.hidden = YES;
+			lastUpdatedLabel.hidden = NO;
 			statusLabel.text = NSLocalizedString(@"Up-to-date.", nil);
 			[activityView stopAnimating];
 			[CATransaction begin];
@@ -196,8 +196,15 @@ static NSDateFormatter *refreshFormatter;
 			
 			break;		
 			
-		case EGOOPullRefreshDownloadFail:
+		case EGOOPullRefreshDownloading:
+			refershProBar.hidden = NO;
+			lastUpdatedLabel.hidden = YES;
 			
+			break;	
+			
+		case EGOOPullRefreshDownloadFail:
+			refershProBar.hidden = YES;			
+			lastUpdatedLabel.hidden = NO;			
 			statusLabel.text = NSLocalizedString(@"Network problem, please try again.", nil);
 			[activityView stopAnimating];
 			[CATransaction begin];
